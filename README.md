@@ -1,78 +1,123 @@
-<<<<<<< HEAD
-# dice-roller
-=======
 # dice-roller
 
 [![Release](https://img.shields.io/github/v/release/rguillon/dice-roller)](https://img.shields.io/github/v/release/rguillon/dice-roller)
-[![Build status](https://img.shields.io/github/actions/workflow/status/rguillon/dice-roller/main.yml?branch=main)](https://github.com/rguillon/dice-roller/actions/workflows/main.yml?query=branch%3Amain)
+[![Build status](https://img.shields.io/github/actions/workflow/status/rguillon/dice-roller/ci.yml?branch=main)](https://github.com/rguillon/dice-roller/actions/workflows/ci.yml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/rguillon/dice-roller/branch/main/graph/badge.svg)](https://codecov.io/gh/rguillon/dice-roller)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/rguillon/dice-roller)](https://img.shields.io/github/commit-activity/m/rguillon/dice-roller)
 [![License](https://img.shields.io/github/license/rguillon/dice-roller)](https://img.shields.io/github/license/rguillon/dice-roller)
 
-A simple package to manipulate dice rolls and compute their probabilities.
+A simple library to compute probabilities with dice rolls.
 
-- **Github repository**: <https://github.com/rguillon/dice-roller/>
-- **Documentation** <https://rguillon.github.io/dice-roller/>
 
-## Getting started with your project
+Roll objects can be created from a simple RPG-like string expression:
 
-### 1. Create a New Repository
+```python
 
-First, create a repository on GitHub with the same name as this project, and then run the following commands:
+from dice_roller import Roll
 
-```bash
-git init -b main
-git add .
-git commit -m "init commit"
-git remote add origin git@github.com:rguillon/dice-roller.git
-git push -u origin main
+Roll("D6")          # One 6 faced dice
+Roll("2D8+1")       # Two 8 faces dices plus 1
+Roll("5D10-1D6-1")  # Five 10 sided dices minus one 6 sided dice minus 1
+Roll("1")           # A constant value of 1
+
 ```
 
-### 2. Set Up Your Development Environment
+Rolls can also be build from a custom map of value/probability
 
-Then, install the environment and the pre-commit hooks with
+```python
 
-```bash
-make install
+# Using a 6 faces dice where 1 to 4 gives 0 points, a 5 gives 1 point, a 6 gives 2 points
+dice = Roll({0:4, 1:1, 2:1})
+
+
 ```
 
-This will also generate your `uv.lock` file
 
-### 3. Run the pre-commit hooks
+Rolls can also be built on the fly
 
-Initially, the CI/CD pipeline might be failing due to formatting issues. To resolve those run:
+```python
 
-```bash
-uv run pre-commit run -a
+from dice_roller import Roll
+
+dice = Roll()
+
+dice.add_event(event=1, probability=1)
+dice.add_event(event=2, probability=1)
+
 ```
 
-### 4. Commit the changes
+Rolls have two attributes:
+* `distribution` returns a map of value/chances.
+* `expected_value` returns the average value of the roll.
 
-Lastly, commit the changes made by the two steps above to your repository.
+```python
 
-```bash
-git add .
-git commit -m 'Fix formatting issues'
-git push origin main
+>>> from dice_roller import Roll
+>>> roll = Roll("2D6+1")
+>>> print(roll.distribution)
+{3.0: 1.0, 4.0: 2.0, 5.0: 3.0, 6.0: 4.0, 7.0: 5.0, 8.0: 6.0, 9.0: 5.0, 10.0: 4.0, 11.0: 3.0, 12.0: 2.0, 13.0: 1.0}
+>>> print(roll.expected_value)
+8.0
+
 ```
 
-You are now ready to start development on your project!
-The CI/CD pipeline will be triggered when you open a pull request, merge to main, or when you create a new release.
+Rolls have a `normalized` function that turns a new Roll with the probabilities scaled so their sum equals the requested value
 
-To finalize the set-up for publishing to PyPI, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/publishing/#set-up-for-pypi).
-For activating the automatic documentation with MkDocs, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/mkdocs/#enabling-the-documentation-on-github).
-To enable the code coverage reports, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/codecov/).
+```python
 
-## Releasing a new version
+>>> roll = Roll("D10")
+>>> print(roll.distribution)
+{1.0: 1.0, 2.0: 1.0, 3.0: 1.0, 4.0: 1.0, 5.0: 1.0, 6.0: 1.0, 7.0: 1.0, 8.0: 1.0, 9.0: 1.0, 10.0: 1.0}
 
-- Create an API Token on [PyPI](https://pypi.org/).
-- Add the API Token to your projects secrets with the name `PYPI_TOKEN` by visiting [this page](https://github.com/rguillon/dice-roller/settings/secrets/actions/new).
-- Create a [new release](https://github.com/rguillon/dice-roller/releases/new) on Github.
-- Create a new tag in the form `*.*.*`.
+# The sum of probabilities equals one.
+>>> print(roll.normalized().distribution)
+{1.0: 0.1, 2.0: 0.1, 3.0: 0.1, 4.0: 0.1, 5.0: 0.1, 6.0: 0.1, 7.0: 0.1, 8.0: 0.1, 9.0: 0.1, 10.0: 0.1}
 
-For more details, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/cicd/#how-to-trigger-a-release).
+# To get probabilitied as percentages
+>>> print(roll.normalized(value=100).distribution)
+{1.0: 10.0, 2.0: 10.0, 3.0: 10.0, 4.0: 10.0, 5.0: 10.0, 6.0: 10.0, 7.0: 10.0, 8.0: 10.0, 9.0: 10.0, 10.0: 10.0}
 
----
 
-Repository initiated with [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv).
->>>>>>> 8f04d19 (Import)
+```
+
+Rolls can be added and subtracted
+
+```python
+
+>>> from dice_roller import Roll
+>>> assert Roll("3D6") == Roll("2D6") +Roll("1D6")
+>>> assert Roll("2D6-D6") == Roll("2D6") - Roll("1D6")
+
+```
+
+Rolls implement comparison operators that will return a new Roll containing the probability of the True/False events:
+
+
+```python
+
+>>> from dice_roller import Roll
+>>> (Roll("1D10") >= Roll("1D6")).distribution
+{1.0: 45.0, 0.0: 15.0}
+
+>>> (Roll("1D10") < Roll("1D20")).expected_value
+0.725
+
+```
+
+Rolls implement a roll method that will returns random values according to their probabilities
+
+```python
+
+>>> result = Roll("1D6").roll()
+
+```
+
+And finally, Rolls implement to_figure method that returns a Matplotlib Figure that can be saved as an image
+
+```python
+
+>>> Roll("5D6").to_figure().savefig("images/5D6.png")
+
+```
+
+![5D6](images/5D6.png "5D6")

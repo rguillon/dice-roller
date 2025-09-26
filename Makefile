@@ -8,7 +8,6 @@ install: ## Install the virtual environment and install the pre-commit hooks
 upgrade:
 	uv sync --upgrade --all-extras --dev
 
-
 .PHONY: check
 check: ## Run code quality tools.
 	@echo "🚀 Checking lock file consistency with 'pyproject.toml'"
