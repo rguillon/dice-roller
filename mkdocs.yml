@@ -1,0 +1,52 @@
+site_name: dice-roller
+repo_url: https://github.com/rguillon/dice-roller
+site_url: https://rguillon.github.io/dice-roller
+site_description: A simple package to manipulate dice rolls and compute their probabilities.
+site_author: Renaud Guillon
+edit_uri: edit/main/docs/
+repo_name: rguillon/dice-roller
+copyright: Maintained by <a href="https://rguillon.com">rguillon</a>.
+
+nav:
+  - Home: index.md
+  - Modules: modules.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["src/dice_roller"]
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/rguillon/dice-roller
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/dice-roller
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
