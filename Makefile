@@ -4,6 +4,11 @@ install: ## Install the virtual environment and install the pre-commit hooks
 	@uv sync
 	@uv run pre-commit install
 
+
+upgrade:
+	uv sync --upgrade --all-extras --dev
+
+
 .PHONY: check
 check: ## Run code quality tools.
 	@echo "🚀 Checking lock file consistency with 'pyproject.toml'"
@@ -11,14 +16,20 @@ check: ## Run code quality tools.
 	@echo "🚀 Linting code: Running pre-commit"
 	@uv run pre-commit run -a
 	@echo "🚀 Static type checking: Running ty"
-	@uv run ty check
+	# @uv run ty check
+	@uvx basedpyright
 	@echo "🚀 Checking for obsolete dependencies: Running deptry"
 	@uv run deptry src
+	@echo "🚀 Checking README examples"
+	@uv run python -m doctest -v README.md
 
 .PHONY: test
 test: ## Test the code with pytest
 	@echo "🚀 Testing code: Running pytest"
-	@uv run python -m pytest --cov --cov-config=pyproject.toml --cov-report=xml
+	@uv run pytest --mpl -vv --cov --cov-config=pyproject.toml --cov-report=xml --cov-report=term --cov-report=html
+
+generate_test_baselines:
+	@uv run pytest --mpl-generate-path=tests/baseline
 
 .PHONY: build
 build: clean-build ## Build wheel file

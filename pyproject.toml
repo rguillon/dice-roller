@@ -17,6 +17,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dependencies = [
+    "matplotlib>=3.9.4",
+]
 
 [project.urls]
 Homepage = "https://rguillon.github.io/dice-roller/"
@@ -35,6 +38,8 @@ dev = [
     "mkdocs>=1.4.2",
     "mkdocs-material>=8.5.10",
     "mkdocstrings[python]>=0.26.1",
+    "pytest-sugar>=1.1.1",
+    "pytest-mpl>=0.17.0",
 ]
 
 [build-system]
@@ -50,6 +55,11 @@ python-version = "3.9"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+log_cli = true
+log_cli_level = "DEBUG"
+log_cli_format = "[%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
 
 [tool.ruff]
 target-version = "py39"
@@ -57,47 +67,28 @@ line-length = 120
 fix = true
 
 [tool.ruff.lint]
-select = [
-    # flake8-2020
-    "YTT",
-    # flake8-bandit
-    "S",
-    # flake8-bugbear
-    "B",
-    # flake8-builtins
-    "A",
-    # flake8-comprehensions
-    "C4",
-    # flake8-debugger
-    "T10",
-    # flake8-simplify
-    "SIM",
-    # isort
-    "I",
-    # mccabe
-    "C90",
-    # pycodestyle
-    "E", "W",
-    # pyflakes
-    "F",
-    # pygrep-hooks
-    "PGH",
-    # pyupgrade
-    "UP",
-    # ruff
-    "RUF",
-    # tryceratops
-    "TRY",
-]
-ignore = [
-    # LineTooLong
-    "E501",
-    # DoNotAssignLambda
-    "E731",
-]
+preview = true
+fixable = ["ALL"]
+select = ["ALL", "RUF022"]
+ignore = [  "COM812",   # cause incompatibility with the formatter
+            "ISC001",   # cause incompatibility with the formatter
+            "D203",     # conflict with another rule
+            "D213",     # conflict with another rule
+            # "CPY001",   # No copyright
+            "S311",     # Random is good enough, it's not cryptography
+            ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
+"tests/*" = [ "S101",     # Allow assert in tests
+              "D100",     # No docstring in tests
+              "D101",     # No docstring in tests
+              "D102",     # No docstring in tests
+              "D103",     # No docstring in tests
+              "D105",     # No docstring in tests
+              "D107",     # No docstring in tests
+              "FBT001",   # Boolean-typed positional argument in function
+              "PLR2004",  # Magic values ok in tests
+              ]
 
 [tool.ruff.format]
 preview = true
@@ -108,3 +99,23 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 source = ["src"]
+
+
+[tool.basedpyright]
+# BasedPyright currently seems like the best type checker option, much faster
+# than mypy and with a good extension for VSCode/Cursor.
+# https://marketplace.visualstudio.com/items?itemName=detachhead.basedpyright
+# https://docs.basedpyright.com/latest/configuration/config-files/#sample-pyprojecttoml-file
+include = ["src/dice_roller"]
+exclude = ["tests"]
+extraPaths = ["src"]
+typeCheckingMode = "all"
+reportUnusedCallResult = false
+reportUnknownMemberType = false
+reportImplicitOverride = false
+
+
+[tool.codespell]
+# Add here as needed:
+# ignore-words-list = "foo,bar"
+# skip = "foo.py,bar.py"
