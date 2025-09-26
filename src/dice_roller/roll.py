@@ -273,7 +273,7 @@ class Roll:
          calculated 2
 
         """
-        values, weights = zip(*self.__distribution.items(), strict=False)
+        values, weights = zip(*self.__distribution.items())
         return float(sum(random.choices(values, weights=weights, k=1)))
 
     def to_figure(
