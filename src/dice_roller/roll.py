@@ -294,7 +294,7 @@ class Roll:
         """
         normalized_dice: Roll = self.normalized(value=100.0)
         outcomes: list[float] = list[float](normalized_dice.distribution.keys())
-        probabilities: list[float] = [normalized_dice.distribution[o] for o in outcomes]
+        probabilities: list[float] = list[float](normalized_dice.distribution.values())
 
         plt.set_loglevel(level="warning")
         logging.getLogger(name="PIL.PngImagePlugin").setLevel(level=logging.CRITICAL + 1)
