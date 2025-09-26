@@ -8,6 +8,7 @@ import logging
 import operator
 import random
 import re
+from re import Pattern
 from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
@@ -42,7 +43,7 @@ class Roll:
         elif value is not None:
             self.__distribution = {value: 1.0}
         elif desc is not None:
-            self.__distribution = Roll.parse_dice_expression(desc).distribution
+            self.__distribution = Roll.parse_dice_expression(expression=desc).distribution
         else:
             self.__distribution = {}
 
@@ -57,7 +58,7 @@ class Roll:
             Roll: A Roll object representing the parsed expression.
 
         """
-        term_pattern = re.compile(r"([+-]?\d*[dD]?\d*)")
+        term_pattern: Pattern[str] = re.compile(r"([+-]?\d*[dD]?\d*)")
         expression = expression.replace(" ", "")
         terms: list[str] = term_pattern.findall(expression)
 
@@ -68,12 +69,12 @@ class Roll:
                 continue
             if "d" in term.lower():
                 sign = -1 if term.startswith("-") else 1
-                clean_term = term.lstrip("+-")
-                num, sides = clean_term.lower().split("d")
-                nb = int(num) if num else 1
-                new_dice = Roll()
+                clean_term: str = term.lstrip("+-")
+                num, sides = clean_term.lower().split(sep="d")
+                nb: int = int(num) if num else 1
+                new_dice: Roll = Roll()
                 for side in range(1, int(sides) + 1):
-                    new_dice.add_event(float(side), 1.0)
+                    new_dice.add_event(event=float(side), probability=1.0)
 
                 if sign == -1:
                     for _ in range(nb):
@@ -273,8 +274,9 @@ class Roll:
          calculated 2
 
         """
-        values, weights = zip(*self.__distribution.items())
-        return float(sum(random.choices(values, weights=weights, k=1)))
+        values: list[float] = list[float](self.distribution.keys())
+        weights: list[float] = list[float](self.distribution.values())
+        return float(sum(random.choices(population=values, weights=weights, k=1)))
 
     def to_figure(
         self, title: str = "Roll Distribution", xlabel: str = "Outcome", ylabel: str = "Probability (%)"
@@ -291,7 +293,7 @@ class Roll:
 
         """
         normalized_dice: Roll = self.normalized(value=100.0)
-        outcomes: list[float] = list(normalized_dice.distribution.keys())
+        outcomes: list[float] = list[float](normalized_dice.distribution.keys())
         probabilities: list[float] = [normalized_dice.distribution[o] for o in outcomes]
 
         plt.set_loglevel(level="warning")
