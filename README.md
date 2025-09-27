@@ -1,7 +1,6 @@
 # dice-roller
 
 [![Release](https://img.shields.io/github/v/release/rguillon/dice-roller)](https://img.shields.io/github/v/release/rguillon/dice-roller)
-[![Build status](https://img.shields.io/github/actions/workflow/status/rguillon/dice-roller/ci.yml?branch=main)](https://github.com/rguillon/dice-roller/actions/workflows/ci.yml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/rguillon/dice-roller/branch/main/graph/badge.svg)](https://codecov.io/gh/rguillon/dice-roller)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/rguillon/dice-roller)](https://img.shields.io/github/commit-activity/m/rguillon/dice-roller)
 [![License](https://img.shields.io/github/license/rguillon/dice-roller)](https://img.shields.io/github/license/rguillon/dice-roller)
