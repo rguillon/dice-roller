@@ -204,6 +204,28 @@ def test_roll_with_complex_expression() -> None:
     assert results == {3, 4, 5, 6}
 
 
+@pytest.mark.parametrize(
+    ("roll"),
+    [
+        (Roll("1")),
+        (Roll("D6")),
+        (Roll("2D6")),
+        (Roll("2D6+10D10")),
+    ],
+)
+def test_roll_distribution(roll: Roll) -> None:
+    results: Roll = Roll()
+
+    for _ in range(10000):
+        results.add_event(event=roll.roll(), probability=1.0)
+
+    # Normalize the results to get a probability distribution
+    results = results.normalized()
+    # Compare the normalized results distribution to the original roll distribution
+    for outcome, probability in roll.normalized().distribution.items():
+        assert pytest.approx(expected=results.distribution.get(outcome, 0.0), abs=0.01, rel=0.01) == probability
+
+
 def test_hash() -> None:
     # dumb test for coverage
     dice1: Roll = Roll(desc="1d4+2")
