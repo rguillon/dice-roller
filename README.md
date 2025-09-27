@@ -27,7 +27,7 @@ Rolls can also be build from a custom map of value/probability
 ```python
 
 # Using a 6 faces dice where 1 to 4 gives 0 points, a 5 gives 1 point, a 6 gives 2 points
-dice = Roll({0:4, 1:1, 2:1})
+dice = Roll(values={0:4, 1:1, 2:1})
 
 
 ```
